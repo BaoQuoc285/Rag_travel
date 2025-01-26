@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCMC Travel Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="icon" href="/static/hcmc-logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        .weather-card {
+            background: linear-gradient(135deg, #00B4DB 0%, #0083B0 100%);
+            color: #ffffff;
+            padding: 1.5rem;
+            margin: 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .weather-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .weather-temp {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .weather-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .weather-icon {
+            font-size: 2rem;
+        }
+
+        .weather-update {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        [data-theme='dark'] .weather-card {
+            background: linear-gradient(135deg, #2C3E50 0%, #3498DB 100%);
+        }
+
+        .metro-card {
+            background: linear-gradient(135deg, #2C3E50 0%, #3498DB 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .metro-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .metro-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .metro-card:hover .metro-image {
+            transform: scale(1.05);
+        }
+
+        .metro-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .metro-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        [data-theme='dark'] .metro-card {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+        }
+
+        #collectionSelect {
+            transition: all 0.3s ease;
+        }
+        
+        #collectionSelect:hover {
+            border-color: #FF6B6B;
+        }
+        
+        #collectionSelect:focus {
+            outline: none;
+            border-color: #FF6B6B;
+            box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+        }
+
+        /* Thêm background gradient mới */
+        .bg-custom {
+            background: linear-gradient(45deg, #4d7c97, transparent);
+            min-height: 100vh;
+        }
+
+        /* Thay đổi màu cho dark mode */
+        [data-theme='dark'] .bg-custom {
+            background: linear-gradient(45deg, #1a202c, #2d3748);
+        }
+
+        /* Điều chỉnh màu card để phù hợp với nền mới */
+        .chat-area, .sidebar {
+            background-color: rgba(255, 255, 255, 0.95);  /* Thêm độ trong suốt nhẹ */
+            backdrop-filter: blur(5px);  /* Hiệu ứng blur nhẹ */
+        }
+
+        [data-theme='dark'] .chat-area,
+        [data-theme='dark'] .sidebar {
+            background-color: rgba(45, 55, 72, 0.95);
+        }
+
+        /* Style mới cho tiêu đề */
+        .main-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .main-title:hover {
+            transform: translateY(-2px);
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme='dark'] .main-title {
+            background: linear-gradient(135deg, #FF8E53 0%, #FFB88C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Thêm style cho carousel */
+        .location-carousel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .carousel-container {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            padding: 0.5rem;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 0.5rem;
+            pointer-events: none;
+        }
+
+        .carousel-button {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+        }
+
+        .carousel-button:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.1);
+        }
+
+        [data-theme='dark'] .carousel-button {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        [data-theme='dark'] .carousel-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-custom dark:from-gray-800 dark:to-gray-900">
+    <div class="container mx-auto px-4 h-screen flex flex-col">
+        <!-- Header -->
+        <header class="py-4">
+            <nav class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <img src="/static/hcmc-logo.png" alt="HCMC Logo" class="h-12">
+                    <h1 class="main-title" id="main-title">HCMC Travel Assistant</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <select id="collectionSelect" class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                        <option value="my_documents">Official Guide</option>
+                        <option value="traveloka">Traveloka Guide</option>
+                    </select>
+                    <button id="refreshSession" class="refresh-btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full flex items-center">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        <span class="refresh-text">Làm mới</span>
+                    </button>
+                    <button class="lang-toggle-btn" id="langToggle">
+                        <span class="lang-icon">🇻🇳</span>
+                        <span class="lang-text">Tiếng Việt</span>
+                    </button>
+                    <button class="theme-btn bg-white dark:bg-gray-700" id="themeToggle">
+                        <i class="fas fa-sun text-yellow-500 dark:hidden"></i>
+                        <i class="fas fa-moon text-blue-300 hidden dark:block"></i>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Main Chat Interface -->
+        <main class="flex-1 flex gap-4">
+            <!-- Left Sidebar -->
+            <aside class="w-1/4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 hidden lg:block">
+                <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white" id="popular-places-title">Popular Destinations</h2>
+                <ul class="space-y-2 popular-places" id="popularPlaces">
+                    <!-- Quick links will be populated by JavaScript -->
+                </ul>
+            </aside>
+
+            <!-- Chat Area -->
+            <div class="flex-1 flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                <div class="bg-white p-4 border-b">
+                    <h2 class="text-black text-xl font-bold chat-title">Travel Guide Chat</h2>
+                </div>
+                
+                <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+                
+                <!-- Input Area -->
+                <div class="border-t p-4 bg-gray-50 dark:bg-gray-700">
+                    <form id="chat-form" class="flex space-x-4 items-center" autocomplete="off">
+                        <input 
+                            type="text" 
+                            id="question" 
+                            class="flex-1 px-4 py-2 rounded-full border focus:outline-none focus:border-orange-500"
+                            placeholder="Ask about places to visit, food, culture..."
+                            required
+                            autocomplete="off"
+                        >
+                        <button type="submit" class="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                    <div id="loading-spinner" class="hidden">
+                        <div class="typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <aside class="w-1/4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 hidden lg:block">
+                <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white" id="travel-tips-title">Travel Tips</h2>
+                <div class="space-y-4 tips-section" id="travelTips">
+                    <!-- Tips will be populated by JavaScript -->
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script>
+        // Cải thiện hàm cuộn xuống
+        function scrollToBottom() {
+            const chatBox = document.getElementById('chat-box');
+            const isScrolledToBottom = chatBox.scrollHeight - chatBox.clientHeight <= chatBox.scrollTop + 1;
+            
+            if (isScrolledToBottom) {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        // Thêm theo dõi chiều cao của chat box
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                if (entry.target.id === 'chat-box') {
+                    scrollToBottom();
+                }
+            }
+        });
+
+        // Theo dõi thay đổi kích thước của chat box
+        const chatBox = document.getElementById('chat-box');
+        resizeObserver.observe(chatBox);
+
+        // Add function to remove emojis
+        function removeEmojis(text) {
+            return text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2702}-\u{27B0}\u{24C2}-\u{1F251}]/gu, '').trim();
+        }
+
+        let isProcessing = false;  // Track if we're waiting for a response
+
+        // Add refresh session handler
+        document.getElementById('refreshSession').addEventListener('click', async () => {
+            const refreshBtn = document.getElementById('refreshSession');
+            
+            if (isProcessing) {
+                alert('Vui lòng đợi câu trả lời hiện tại hoàn thành!');
+                return;
+            }
+
+            try {
+                refreshBtn.disabled = true;
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang làm mới...';
+                
+                const response = await fetch('/', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const chatBox = document.getElementById('chat-box');
+                    
+                    // Clear chat
+                    chatBox.innerHTML = '';
+                    
+                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i><span class="refresh-text">Làm mới</span>';
+                }
+            } catch (error) {
+                console.error('Error refreshing session:', error);
+                alert('Có lỗi xảy ra khi làm mới. Vui lòng thử lại!');
+            } finally {
+                refreshBtn.disabled = false;
+            }
+        });
+
+        document.getElementById('chat-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            if (isProcessing) {
+                alert('Vui lòng đợi câu trả lời hiện tại hoàn thành!');
+                return;
+            }
+
+            const refreshBtn = document.getElementById('refreshSession');
+            refreshBtn.disabled = true;  // Disable refresh while processing
+            isProcessing = true;
+
+            const questionInput = document.getElementById('question');
+            const chatBox = document.getElementById('chat-box');
+            const question = questionInput.value.trim();
+            
+            if (!question) return;
+
+            try {
+                // Display user message
+                const userDiv = document.createElement('div');
+                userDiv.className = 'message user-message';
+                userDiv.textContent = question;
+                chatBox.appendChild(userDiv);
+                
+                // Clear input and scroll
+                questionInput.value = '';
+                scrollToBottom();
+
+                // Create bot message container
+                const botDiv = document.createElement('div');
+                botDiv.className = 'message bot-message';
+                chatBox.appendChild(botDiv);
+
+                // Send request with credentials to include cookies
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    credentials: 'include', // This enables sending cookies
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question: question })
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                // Read streaming response
+                let botResponse = '';
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const text = decoder.decode(value);
+                    
+                    // Regular content update
+                    botResponse += text;
+                    botDiv.innerHTML = botResponse;
+                    
+                    scrollToBottom();
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message bot-message error';
+                errorDiv.textContent = 'Sorry, an error occurred. Please try again.';
+                chatBox.appendChild(errorDiv);
+            } finally {
+                isProcessing = false;
+                refreshBtn.disabled = false;  // Re-enable refresh button
+            }
+            
+            scrollToBottom();
+        });
+
+        // Add new functions for quick-ask buttons
+        document.querySelectorAll('.quick-ask').forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('question').value = button.textContent;
+            });
+        });
+
+        // Update quick-ask button functionality
+        function setupQuickAskButtons() {
+            document.querySelectorAll('.quick-ask').forEach(button => {
+                button.addEventListener('click', () => {
+                    const input = document.getElementById('question');
+                    input.value = button.textContent.trim(); // Remove extra whitespace
+                    input.focus(); // Focus the input
+                    // Optional: Automatically submit the form
+                    // document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+                });
+            });
+        }
+
+        // Language and content management
+        const translations = {
+            en: {
+                title: 'HCMC Travel Assistant',
+                popularPlaces: 'Popular Destinations',
+                travelTips: 'Travel Tips',
+                places: [
+                    '🏛️ Independence Palace',
+                    '⛪ Notre-Dame Cathedral',
+                    '📫 Central Post Office',
+                    '🛍️ Ben Thanh Market',
+                    '🕯️ War Remnants Museum'
+                ],
+                tips: [
+                    { 
+                        title: 'Current Weather',
+                        template: `
+                            <div class="weather-card" id="weather-tip">
+                                <div class="weather-header">
+                                    <h3>HCMC Weather</h3>
+                                    <div class="weather-icon">🌤️</div>
+                                </div>
+                                <div class="weather-temp">--°C</div>
+                                <div class="weather-info">
+                                    <i class="fas fa-clock"></i>
+                                    <span class="weather-update">Updating...</span>
+                                </div>
+                            </div>
+                        `,
+                        id: 'weather-tip'
+                    },
+                    {
+                        title: 'Popular Locations',
+                        template: `
+                            <div class="location-carousel">
+                                <div class="carousel-container" id="carousel">
+                                    <div class="carousel-slide">
+                                        <div class="metro-card">
+                                            <img src="/static/metrobenthanh.jpg" alt="Metro Ben Thanh" class="metro-image">
+                                            <h3 class="metro-title">Ben Thanh Metro</h3>
+                                            <p class="metro-info">First underground metro system in HCMC, connecting Ben Thanh Market to Suoi Tien Theme Park.</p>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-slide">
+                                        <div class="metro-card">
+                                            <img src="/static/benthanhmarket.jpg" alt="Ben Thanh Market" class="metro-image">
+                                            <h3 class="metro-title">Ben Thanh Market</h3>
+                                            <p class="metro-info">Iconic central market famous for local food, souvenirs and Vietnamese culture experience.</p>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-slide">
+                                        <div class="metro-card">
+                                            <img src="/static/bui-vien-street.jpg" alt="Bui Vien Walking Street" class="metro-image">
+                                            <h3 class="metro-title">Bui Vien Street</h3>
+                                            <p class="metro-info">Famous backpacker street with vibrant nightlife, bars, restaurants and street food.</p>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-slide">
+                                        <div class="metro-card">
+                                            <img src="/static/duonghoanguyenhue.jpg" alt="Nguyen Hue Walking Street" class="metro-image">
+                                            <h3 class="metro-title">Nguyen Hue Street</h3>
+                                            <p class="metro-info">Modern walking street with amazing city views, cultural events and water fountain shows.</p>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-slide">
+                                        <div class="metro-card">
+                                            <img src="/static/phodibonguyenhue.jpg" alt="Nguyen Hue Walking Street Night" class="metro-image">
+                                            <h3 class="metro-title">Nguyen Hue at Night</h3>
+                                            <p class="metro-info">Beautiful night scenery with colorful lights and bustling atmosphere of downtown HCMC.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="carousel-nav">
+                                    <button class="carousel-button prev-btn" onclick="moveCarousel(-1)">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="carousel-button next-btn" onclick="moveCarousel(1)">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `
+                    }
+                ],
+                placeholder: 'Ask about places to visit, food, culture...'
+            },
+            vi: {
+                title: 'Trợ Lý Du Lịch TPHCM',
+                popularPlaces: 'Điểm Đến Phổ Biến',
+                travelTips: 'Mẹo Du Lịch',
+                places: [
+                    '🏛️ Dinh Độc Lập',
+                    '⛪ Nhà thờ Đức Bà',
+                    '📫 Bưu điện Trung tâm',
+                    '🛍️ Chợ Bến Thành',
+                    '🕯️ Bảo tàng Chứng tích Chiến tranh'
+                ],
+                tips: [
+                    {
+                        title: 'Thời Tiết Hiện Tại',
+                        template: `
+                            <div class="weather-card" id="weather-tip">
+                                <div class="weather-header">
+                                    <h3>Thời Tiết TPHCM</h3>
+                                    <div class="weather-icon">🌤️</div>
+                                </div>
+                                <div class="weather-temp">--°C</div>
+                                <div class="weather-info">
+                                    <i class="fas fa-clock"></i>
+                                    <span class="weather-update">Đang cập nhật...</span>
+                                </div>
+                            </div>
+                        `,
+                        id: 'weather-tip'
+                    },
+                    {
+                        title: 'Địa Điểm Nổi Bật',
+                        template: `
+                            <div class="location-carousel">
+                                <div class="carousel-container" id="carousel">
+                                    <div class="carousel-slide">
+                                        <div class="metro-card">
+                                            <img src="/static/metrobenthanh.jpg" alt="Metro Bến Thành" class="metro-image">
+                                            <h3 class="metro-title">Metro Bến Thành</h3>
+                                            <p class="metro-info">Tuyến metro đầu tiên của TPHCM.</p>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-slide">
+                                        <div class="metro-card">
+                                            <img src="/static/benthanhmarket.jpg" alt="Chợ Bến Thành" class="metro-image">
+                                            <h3 class="metro-title">Chợ Bến Thành</h3>
+                                            <p class="metro-info">Khu chợ trung tâm nổi tiếng với ẩm thực địa phương, đồ lưu niệm và trải nghiệm văn hóa Việt Nam.</p>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-slide">
+                                        <div class="metro-card">
+                                            <img src="/static/bui-vien-street.jpg" alt="Phố đi bộ Bùi Viện" class="metro-image">
+                                            <h3 class="metro-title">Phố Bùi Viện</h3>
+                                            <p class="metro-info">Phố Tây sôi động với đời sống về đêm, quán bar, nhà hàng và ẩm thực đường phố.</p>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-slide">
+                                        <div class="metro-card">
+                                            <img src="/static/duonghoanguyenhue.jpg" alt="Phố đi bộ Nguyễn Huệ" class="metro-image">
+                                            <h3 class="metro-title">Phố Nguyễn Huệ</h3>
+                                            <p class="metro-info">Phố đi bộ hiện đại với tầm nhìn tuyệt đẹp, sự kiện văn hóa và đài phun nước.</p>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-slide">
+                                        <div class="metro-card">
+                                            <img src="/static/phodibonguyenhue.jpg" alt="Phố đi bộ Nguyễn Huệ về đêm" class="metro-image">
+                                            <h3 class="metro-title">Nguyễn Huệ về đêm</h3>
+                                            <p class="metro-info">Khung cảnh đêm tuyệt đẹp với ánh đèn màu và không khí nhộn nhịp của trung tâm thành phố.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="carousel-nav">
+                                    <button class="carousel-button prev-btn" onclick="moveCarousel(-1)">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="carousel-button next-btn" onclick="moveCarousel(1)">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `
+                    }
+                ],
+                placeholder: 'Hỏi về địa điểm, ẩm thực, văn hóa...'
+            }
+        };
+
+        let currentLang = 'en';
+        let isDark = false;
+
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            isDark = !isDark;
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            document.body.classList.toggle('dark');
+            
+            // Update all theme-sensitive elements
+            document.querySelectorAll('[class*="dark:"]').forEach(element => {
+                element.classList.toggle('dark-mode');
+            });
+            
+            // Update background colors
+            document.body.style.backgroundColor = isDark ? '#1a1a1a' : '#fff';
+            updateThemeColors();
+        });
+
+        // Language toggle with visual feedback
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'vi' : 'en';
+            const langBtn = document.getElementById('langToggle');
+            const langIcon = langBtn.querySelector('.lang-icon');
+            const langText = langBtn.querySelector('.lang-text');
+            
+            if (currentLang === 'vi') {
+                langIcon.textContent = '🇺🇸';
+                langText.textContent = 'English';
+                langBtn.classList.add('en');
+                langBtn.classList.remove('vi');
+            } else {
+                langIcon.textContent = '🇻🇳';
+                langText.textContent = 'Tiếng Việt';
+                langBtn.classList.add('vi');
+                langBtn.classList.remove('en');
+            }
+            
+            updateContent();
+        });
+
+        function updateContent() {
+            const content = translations[currentLang];
+            document.getElementById('main-title').textContent = content.title;
+            document.getElementById('popular-places-title').textContent = content.popularPlaces;
+            document.getElementById('travel-tips-title').textContent = content.travelTips;
+            
+            // Update places with event listeners directly in the HTML
+            const placesList = document.getElementById('popularPlaces');
+            placesList.innerHTML = content.places.map(place => 
+                `<li><button onclick="fillQuestion(this.textContent)" class="quick-ask w-full text-left px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition-colors">${place}</button></li>`
+            ).join('');
+
+            // Update tips với template mới
+            const tipsContainer = document.getElementById('travelTips');
+            tipsContainer.innerHTML = content.tips.map(tip => 
+                tip.template ? tip.template : `
+                    <div class="tip-card" ${tip.id ? `id="${tip.id}"` : ''}>
+                        <h3>${tip.title}</h3>
+                        <p>${tip.content}</p>
+                    </div>
+                `
+            ).join('');
+
+            // Update placeholder
+            document.getElementById('question').placeholder = content.placeholder;
+        }
+
+        // Add this new function to handle filling the question
+        function fillQuestion(text) {
+            const input = document.getElementById('question');
+            input.value = text.trim();
+            input.focus();
+        }
+
+        // Function to update theme colors
+        function updateThemeColors() {
+            const root = document.documentElement;
+            const isDark = document.body.classList.contains('dark');
+            
+            const colors = isDark ? {
+                bg: '#1a1a1a',
+                text: '#ffffff',
+                cardBg: '#2d2d2d',
+                cardBorder: '#404040',
+                inputBg: '#374151',
+                inputText: '#ffffff'
+            } : {
+                bg: '#ffffff',
+                text: '#1a1a1a',
+                cardBg: '#ffffff',
+                cardBorder: '#e5e5e5',
+                inputBg: '#ffffff',
+                inputText: '#000000'
+            };
+
+            root.style.setProperty('--bg-primary', colors.bg);
+            root.style.setProperty('--text-primary', colors.text);
+            root.style.setProperty('--card-bg', colors.cardBg);
+            root.style.setProperty('--card-border', colors.cardBorder);
+            root.style.setProperty('--input-bg', colors.inputBg);
+            root.style.setProperty('--input-text', colors.inputText);
+        }
+
+        // Initialize theme
+        updateThemeColors();
+
+        // Initialize content
+        updateContent();
+
+        // Initialize quick ask buttons
+        setupQuickAskButtons();
+
+        // Add some CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            .refresh-btn:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            .fa-spin {
+                animation: spin 1s linear infinite;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Thêm xử lý collection change trong script
+        document.getElementById('collectionSelect').addEventListener('change', async function() {
+            const collection = this.value;
+            try {
+                const response = await fetch('/change-collection', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ collection: collection })
+                });
+                
+                if (response.ok) {
+                    // Refresh chat session
+                    document.getElementById('refreshSession').click();
+                }
+            } catch (error) {
+                console.error('Error changing collection:', error);
+            }
+        });
+
+        // Thêm script điều khiển carousel
+        let currentSlide = 0;
+        function moveCarousel(direction) {
+            const carousel = document.querySelector('.carousel-container');
+            const slides = document.querySelectorAll('.carousel-slide');
+            const totalSlides = slides.length;
+            
+            currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+            carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+    </script>
+
+    <script>
+        // Improved scroll function
+        function scrollToBottom(force = false) {
+            const chatBox = document.getElementById('chat-box');
+            const shouldScroll = force || 
+                chatBox.scrollHeight - chatBox.clientHeight <= chatBox.scrollTop + 150;
+            
+            if (shouldScroll) {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        // Add scroll observer
+        let isUserScrolling = false;
+        let scrollTimeout;
+
+        document.getElementById('chat-box').addEventListener('scroll', () => {
+            isUserScrolling = true;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                isUserScrolling = false;
+            }, 1000);
+        });
+
+        // Update form submission handler
+        document.getElementById('chat-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            // ...existing submit code...
+
+            try {
+                // ...existing try block code...
+                
+                // Clear input and force scroll
+                questionInput.value = '';
+                scrollToBottom(true);
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const text = decoder.decode(value);
+                    botResponse += text;
+                    botDiv.textContent = botResponse;
+                    
+                    // Only auto-scroll if user isn't manually scrolling
+                    if (!isUserScrolling) {
+                        scrollToBottom();
+                    }
+                }
+            } catch (error) {
+                // ...existing error handling...
+            }
+        });
+
+        // Initialize with fixed height
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.container');
+            const windowHeight = window.innerHeight;
+            container.style.height = `${Math.min(900, Math.max(600, windowHeight))}px`;
+            scrollToBottom(true);
+        });
+
+        // Thêm hàm fetch weather data
+        async function fetchWeather() {
+            try {
+                const response = await fetch('/api/weather', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                return {
+                    temp: Math.round(data.temperature),
+                    time: new Date().toLocaleTimeString(),
+                    icon: getWeatherIcon(data.temperature) // Thêm icon dựa vào nhiệt độ
+                };
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+                return null;
+            }
+        }
+
+        // Thêm hàm chọn icon thời tiết
+        function getWeatherIcon(temp) {
+            if (temp >= 30) return '☀️';
+            if (temp >= 25) return '🌤️';
+            if (temp >= 20) return '⛅';
+            return '🌥️';
+        }
+
+        // Add weather update function
+        async function updateWeather() {
+            const weatherData = await fetchWeather();
+            if (weatherData) {
+                const weatherCard = document.getElementById('weather-tip');
+                if (weatherCard) {
+                    const temp = weatherCard.querySelector('.weather-temp');
+                    const update = weatherCard.querySelector('.weather-update');
+                    const icon = weatherCard.querySelector('.weather-icon');
+                    
+                    temp.textContent = `${weatherData.temp}°C`;
+                    icon.textContent = weatherData.icon;
+                    update.textContent = currentLang === 'vi' 
+                        ? `Cập nhật: ${weatherData.time}`
+                        : `Updated: ${weatherData.time}`;
+                }
+            }
+        }
+
+        // Initialize weather updates
+        document.addEventListener('DOMContentLoaded', async () => {
+            // ...existing DOMContentLoaded code...
+            
+            // Initial weather update
+            await updateWeather();
+            
+            // Update weather every 5 minutes
+            setInterval(updateWeather, 300000);
+        });
+    </script>
+
+    <script>
+        // Add weather update function
+        async function updateWeather() {
+            const weatherData = await fetchWeather();
+            if (weatherData) {
+                const weatherCard = document.getElementById('weather-tip');
+                if (weatherCard) {
+                    const temp = weatherCard.querySelector('.weather-temp');
+                    const update = weatherCard.querySelector('.weather-update');
+                    const icon = weatherCard.querySelector('.weather-icon');
+                    
+                    temp.textContent = `${weatherData.temp}°C`;
+                    icon.textContent = weatherData.icon;
+                    update.textContent = currentLang === 'vi' 
+                        ? `Cập nhật: ${weatherData.time}`
+                        : `Updated: ${weatherData.time}`;
+                }
+            }
+        }
+
+        // Initialize weather updates
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.querySelector('.container');
+            const windowHeight = window.innerHeight;
+            container.style.height = `${Math.min(900, Math.max(600, windowHeight))}px`;
+            scrollToBottom(true);
+            
+            // Initial weather update
+            await updateWeather();
+            
+            // Update weather every 5 minutes
+            setInterval(updateWeather, 300000);
+        });
+    </script>
+
+    <style>
+        .bot-response-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 100%;
+        }
+
+        .bot-response-container .message {
+            margin: 0;
+        }
+
+        .sources-section {
+            font-size: 0.9rem;
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+    </style>
+
+</body>
+</html>

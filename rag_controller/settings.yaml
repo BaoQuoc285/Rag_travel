@@ -1,0 +1,40 @@
+server:
+  env_name: ${APP_ENV:prod}
+  port: ${PORT:8080}
+
+llm:
+  mode: ${LLM_MODE:gemini}
+
+vectorstore:
+  database: ${VECTOR_STORE:qdrant}
+
+rag:
+  # This value controls how many "top" documents the RAG returns to use in the context.
+  # similarity_top_k: ${SIMILARITY_TOP_K:20}
+
+  # hybrid_retriever:
+  #   enabled: true
+
+  # rerank:
+  #   enabled: ${RERANK_ENABLED:false}
+  #   top_n: ${RERANK_TOP_N:5}
+  #   mode: model_api
+
+qdrant:
+  api_key: ${WEAVIATE_ENDPOINT:http://localhost:9091}
+  api_base: https://integrate.api.nvidia.com/v1
+
+mongodb:
+  collection: meta/llama3-70b-instruct
+  api_base: https://integrate.api.nvidia.com/v1
+  api_key: ${NVIDIA_NIM_API:}
+  temperature: 0.5
+  top_p: 1
+  max_tokens: 1024
+
+gemini:
+  model: gemini-1.5-flash
+  api_key: ${NVIDIA_NIM_API:}
+  # temperature: 0.5
+  # top_p: 1
+  # max_tokens: 1024

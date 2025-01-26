@@ -1,0 +1,85 @@
+<div class="sources-list">
+    <div class="source-link">
+        <span class="source-number">[1]</span>
+        <a href="{{ url }}" target="_blank" class="source-url" data-title="{{ url }}">{{ domain }}</a>
+    </div>
+</div>
+
+<style>
+/* Sources List Styles */
+.sources-list {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.source-link {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+    border-radius: 0.25rem;
+    background: rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+}
+
+.source-link:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.source-number {
+    color: #666;
+    font-weight: bold;
+    margin-right: 0.75rem;
+    min-width: 2rem;
+}
+
+.source-url {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    position: relative;
+}
+
+.source-url::after {
+    content: attr(data-title);
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.source-url:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-0.25rem);
+}
+
+[data-theme='dark'] .source-link {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme='dark'] .source-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme='dark'] .source-number {
+    color: #999;
+}
+
+[data-theme='dark'] .source-url {
+    color: #66b3ff;
+}
+</style>
